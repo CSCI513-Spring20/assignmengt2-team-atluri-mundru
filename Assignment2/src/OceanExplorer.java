@@ -42,28 +42,34 @@ public class OceanExplorer extends Application{
 	}
 	
 	public void drawMap(AnchorPane myPane) {
-		System.out.println("-----------------------------");
-		for(int i=0;i<10;i++) {
-			for(int j=0;j<10;j++) {
-				System.out.print(oceanMap.getInstance().getMap()[i][j]);
-			}
-			System.out.println();
-		}
-		
+//		for(int i=0;i<10;i++) {
+//			for(int j=0;j<10;j++) {
+//				System.out.print(oceanMap.getInstance().getMap()[i][j]);
+//			}
+//			System.out.println();
+//		}
+		//System.out.println("-----------------------------");
+
 		for(int x = 0; x < dimension; x++){
 			 for(int y = 0; y < dimension; y++){
-			 Rectangle rect = new Rectangle(x*scale,y*scale,scale,scale);
+			 
+			 //System.out.print(oceanMap.getInstance().getMap()[x][y]);
 			 if(oceanMap.getInstance().getMap()[x][y]) {
+				 Rectangle rect = new Rectangle(x*scale,y*scale,scale,scale);
+				 myPane.getChildren().add(rect);
 				 rect.setStroke(Color.BLACK); // We want the black outline
 				 rect.setFill(Color.GREEN); 
 			 }
 			 else {
+				 Rectangle rect = new Rectangle(x*scale,y*scale,scale,scale);
+				 myPane.getChildren().add(rect);
 				 rect.setStroke(Color.BLACK); // We want the black outline
 				 rect.setFill(Color.PALETURQUOISE); // I like this color better than BLUE
 			
 			}
-			myPane.getChildren().add(rect); // Add to the node tree in the pane
+			 // Add to the node tree in the pane
 			}
+			 //System.out.println();
 	}
   }
 	private void LoadShipImage(AnchorPane pane) {
