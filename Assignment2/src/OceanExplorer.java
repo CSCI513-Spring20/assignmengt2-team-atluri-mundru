@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.ImagePattern;
 public class OceanExplorer extends Application{
 	final int dimension = 10;
 	final int scale = 50;
@@ -16,6 +17,9 @@ public class OceanExplorer extends Application{
 	Image shipImage;
 	Ship ship;
 	ImageView shipImageView;
+	ImageView shipImageView1;
+	ImageView shipImageView2;
+	ImageView islandImageView;
 	Point startPoint;
 
 
@@ -38,32 +42,56 @@ public class OceanExplorer extends Application{
 		startPoint = oceanMap.getShipLocation();
 		ship = new Ship(startPoint.x,startPoint.y);
 		LoadShipImage(myPane);
+		startPoint = oceanMap.getShipLocation();
+		LoadPirateShipImage(myPane);
+		//startPoint = oceanMap.getShipLocation();
+		//LoadPirateShipImage2(myPane);
+		
 		startSailing(scene);
 	}
 	
 	public void drawMap(AnchorPane myPane) {
-		System.out.println("-----------------------------");
-		for(int i=0;i<10;i++) {
-			for(int j=0;j<10;j++) {
-				System.out.print(oceanMap.getInstance().getMap()[i][j]);
-			}
-			System.out.println();
-		}
-		
+//		for(int i=0;i<10;i++) {
+//			for(int j=0;j<10;j++) {
+//				System.out.print(oceanMap.getInstance().getMap()[i][j]);
+//			}
+//			System.out.println();
+//		}
+		//System.out.println("-----------------------------");
+
 		for(int x = 0; x < dimension; x++){
 			 for(int y = 0; y < dimension; y++){
-			 Rectangle rect = new Rectangle(x*scale,y*scale,scale,scale);
+			 
+			 //System.out.print(oceanMap.getInstance().getMap()[x][y]);
 			 if(oceanMap.getInstance().getMap()[x][y]) {
-				 rect.setStroke(Color.BLACK); // We want the black outline
-				 rect.setFill(Color.GREEN); 
+				 Rectangle rect = new Rectangle(x*scale,y*scale,scale,scale);
+				 
+				 myPane.getChildren().add(rect);
+				 Image island = new Image("island.jpg",50,50,true,true);
+				 ImagePattern imagep = new ImagePattern(island);
+				 rect.setFill(imagep);
+				 
+				 //rect.setStroke(Color.BLACK); // We want the black outline
+				 //rect.setFill(Color.GREEN);
+
+				 
+				 
+				 //				 Image islandImage = new Image("island.jpg",50,50,true,true);
+//				 islandImageView = new ImageView(islandImage);
+//				 islandImageView.setX(x * scale);
+//				 islandImageView.setY(y * scale);
+//				 myPane.getChildren().add(shipImageView);
 			 }
 			 else {
+				 Rectangle rect = new Rectangle(x*scale,y*scale,scale,scale);
+				 myPane.getChildren().add(rect);
 				 rect.setStroke(Color.BLACK); // We want the black outline
 				 rect.setFill(Color.PALETURQUOISE); // I like this color better than BLUE
 			
 			}
-			myPane.getChildren().add(rect); // Add to the node tree in the pane
+			 // Add to the node tree in the pane
 			}
+			 //System.out.println();
 	}
   }
 	private void LoadShipImage(AnchorPane pane) {
@@ -74,6 +102,21 @@ public class OceanExplorer extends Application{
 		pane.getChildren().add(shipImageView);
 	}
 	
+	private void LoadPirateShipImage(AnchorPane pane) {
+		Image shipImage1 = new Image("pirateShip.png",50,50,true,true);
+		shipImageView1 = new ImageView(shipImage1);
+		shipImageView1.setX(startPoint.x * scale);
+		shipImageView1.setY(startPoint.y * scale);
+		pane.getChildren().add(shipImageView1);
+	}
+	
+//	private void LoadPirateShipImage2(AnchorPane pane) {
+//		Image shipImage2 = new Image("pirateShip.png",50,50,true,true);
+//		shipImageView2 = new ImageView(shipImage2);
+//		shipImageView2.setX(startPoint.x * scale);
+//		shipImageView2.setY(startPoint.y * scale);
+//		pane.getChildren().add(shipImageView2);
+//	}
 	private void startSailing(Scene scene) {
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
