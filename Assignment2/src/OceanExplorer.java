@@ -12,17 +12,13 @@ import javafx.scene.layout.AnchorPane;
 public class OceanExplorer extends Application{
 	final int dimension = 10;
 	final int scale = 50;
-	boolean[][] oceanGrid = new boolean[10][10];
-	OceanMap oceanMap = new OceanMap();
+	OceanMap oceanMap = OceanMap.getInstance();
 	Image shipImage;
 	Ship ship;
 	ImageView shipImageView;
 	Point startPoint;
 
-	
-	public OceanExplorer() {
-		oceanGrid = oceanMap.getMap();
-	}
+
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -46,16 +42,30 @@ public class OceanExplorer extends Application{
 	}
 	
 	public void drawMap(AnchorPane myPane) {
+		System.out.println("-----------------------------");
+		for(int i=0;i<10;i++) {
+			for(int j=0;j<10;j++) {
+				System.out.print(oceanMap.getInstance().getMap()[i][j]);
+			}
+			System.out.println();
+		}
+		
 		for(int x = 0; x < dimension; x++){
 			 for(int y = 0; y < dimension; y++){
 			 Rectangle rect = new Rectangle(x*scale,y*scale,scale,scale);
-			rect.setStroke(Color.BLACK); // We want the black outline
-			rect.setFill(Color.PALETURQUOISE); // I like this color better than BLUE
+			 if(oceanMap.getInstance().getMap()[x][y]) {
+				 rect.setStroke(Color.BLACK); // We want the black outline
+				 rect.setFill(Color.GREEN); 
+			 }
+			 else {
+				 rect.setStroke(Color.BLACK); // We want the black outline
+				 rect.setFill(Color.PALETURQUOISE); // I like this color better than BLUE
+			
+			}
 			myPane.getChildren().add(rect); // Add to the node tree in the pane
 			}
-			}
 	}
-	
+  }
 	private void LoadShipImage(AnchorPane pane) {
 		Image shipImage = new Image("ship.png",50,50,true,true);
 		shipImageView = new ImageView(shipImage);
@@ -68,6 +78,7 @@ public class OceanExplorer extends Application{
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent ke) {
+				
 				switch (ke.getCode()) {
 				case RIGHT:
 					ship.goEast();
