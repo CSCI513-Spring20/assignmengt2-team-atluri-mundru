@@ -16,6 +16,7 @@ public class OceanExplorer extends Application{
 	OceanMap oceanMap = OceanMap.getInstance();
 	Image shipImage;
 	Ship ship;
+	PirateShip pirateShip;
 	ImageView shipImageView;
 	ImageView shipImageView1;
 	ImageView shipImageView2;
@@ -42,7 +43,8 @@ public class OceanExplorer extends Application{
 		startPoint = oceanMap.getShipLocation();
 		ship = new Ship(startPoint.x,startPoint.y);
 		LoadShipImage(myPane);
-		startPoint = oceanMap.getShipLocation();
+		startPoint = oceanMap.getPirateShipLocation();
+		pirateShip = new PirateShip(startPoint.x, startPoint.y);
 		LoadPirateShipImage(myPane);
 		//startPoint = oceanMap.getShipLocation();
 		//LoadPirateShipImage2(myPane);
@@ -140,6 +142,8 @@ public class OceanExplorer extends Application{
 				}
 				shipImageView.setX(ship.getShipLocation().x * scale);
 				shipImageView.setY(ship.getShipLocation().y * scale);
+				shipImageView1.setX(pirateShip.getPirateShipLocation().x*scale);
+				shipImageView1.setY(pirateShip.getPirateShipLocation().y*scale);
 			}
 		});
 
