@@ -18,7 +18,8 @@ Ship ship;
 ImageView shipImageView;
 ImageView shipImageView1;
 ImageView shipImageView2;
-Point startPoint;
+Point startPoint,piratePoint;
+PirateShip p1;
 
 
 
@@ -40,7 +41,9 @@ drawMap(myPane);
 startPoint = oceanMap.getShipLocation();
 ship = new Ship(startPoint.x,startPoint.y);
 LoadShipImage(myPane);
-startPoint = oceanMap.getShipLocation();
+piratePoint = oceanMap.getPirateShipLocation();
+p1 = new PirateShip(piratePoint.x,piratePoint.y);
+ship.registerObserver(p1);
 LoadPirateShipImage(myPane);
 //startPoint = oceanMap.getShipLocation();
 //LoadPirateShipImage2(myPane);
@@ -85,13 +88,14 @@ shipImageView = new ImageView(shipImage);
 shipImageView.setX(startPoint.x * scale);
 shipImageView.setY(startPoint.y * scale);
 pane.getChildren().add(shipImageView);
+
 }
 
 private void LoadPirateShipImage(AnchorPane pane) {
 Image shipImage1 = new Image("pirateShip.png",50,50,true,true);
 shipImageView1 = new ImageView(shipImage1);
-shipImageView1.setX(startPoint.x * scale);
-shipImageView1.setY(startPoint.y * scale);
+//shipImageView1.setX(startPoint.x * scale);
+//shipImageView1.setY(startPoint.y * scale);
 pane.getChildren().add(shipImageView1);
 }
 
@@ -125,9 +129,12 @@ break;
 }
 shipImageView.setX(ship.getShipLocation().x * scale);
 shipImageView.setY(ship.getShipLocation().y * scale);
+shipImageView1.setX(p1.getPirateShipLocation().x * scale);
+shipImageView1.setY(p1.getPirateShipLocation().y * scale);
 }
 });
 
 }
 
 }
+
