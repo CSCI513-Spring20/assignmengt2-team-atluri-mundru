@@ -1,83 +1,65 @@
-import java.awt.Point;
 import java.util.Observable;
-import java.util.Observer;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Random;
+import java.awt.Point;
 
+// Ship class extending observable class
 public class Ship extends Observable{
-List<Observer> observer=new LinkedList<Observer>();
-int xcoordinate;
-int ycoordinate;
-OceanMap oceanMap = OceanMap.getInstance();
-//oceanGrid=oceanMap.getMap();
+    OceanMap oceanMap;
+    Point currentLocation;
+    Random rand = new Random();
 
-public Ship(int x, int y) {
+    public Ship(OceanMap oceanMap){
+        
+        this.oceanMap = oceanMap;
+        oceanMap.ship = this;
+        
+        while(true){
+            int x = rand.nextInt(oceanMap.dimensions);
+            int y = rand.nextInt(oceanMap.dimensions);
+            //initial point can't be an island
+            if(oceanMap.getMap()[x][y] != 1){
+                currentLocation = new Point(x,y);
+                break;
+            }
+        }
+    }
 
-xcoordinate = x;
-ycoordinate = y;
-}
+    public Point getShipLocation(){
+        return this.currentLocation;
+    }
+    // Implementing methods for east, west, south, north key movements and notifying observers
+    public void goEast() {
+    	 if(currentLocation.x<9 && oceanMap.getMap()[currentLocation.x+1][currentLocation.y]!=1) {
+             currentLocation.x++;
+    	 	setChanged();
+    	 	notifyObservers();
+    	 }
+    }
+    public void goWest() {
+    	 if(currentLocation.x>0 && oceanMap.getMap()[currentLocation.x-1][currentLocation.y]!=1 ) {
+             currentLocation.x--;
+             setChanged();
+     	 	notifyObservers();
+    	 }
+    	
+    }
+    public void goNorth() {
+    	 if(currentLocation.y>0 && oceanMap.getMap()[currentLocation.x][currentLocation.y-1]!=1) {
+             currentLocation.y--;
+    	     setChanged();
+    	     notifyObservers();
+    	 }
+    	
+    }
+    public void goSouth() {
+    	 if(currentLocation.y<9 && oceanMap.getMap()[currentLocation.x][currentLocation.y+1]!=1) {
+             currentLocation.y++;
+             setChanged();
+    	     notifyObservers();
+    	 }
+    	
+    }
+    	 
+    }
 
-public void goEast() {
-if (xcoordinate != 9) {
-if(!oceanMap.getMap()[xcoordinate+1][ycoordinate]) {
-xcoordinate=xcoordinate+1;
-setChanged();
-notifyObservers();
-
-}
-}
-// System.out.println("-----------------------------");
-// for(int i=0;i<10;i++) {
-// for(int j=0;j<10;j++) {
-// System.out.print(oceanMap.getInstance().getMap()[i][j]);
-// }
-// System.out.println();
-// }
-
-}
-
-public void goWest() {
-if (xcoordinate != 0) {
-if(!oceanMap.getMap()[xcoordinate-1][ycoordinate]) {
-xcoordinate=xcoordinate-1;
-setChanged();
-notifyObservers();
-}
-}
-}
-
-
-public void goNorth() {
-if (ycoordinate != 0) {
-if(!oceanMap.getMap()[xcoordinate][ycoordinate-1]) {
-ycoordinate=ycoordinate-1;
-setChanged();
-notifyObservers();
-}
-}
-}
-
-
-public void goSouth() {
-if (ycoordinate != 9) {
-if(!oceanMap.getMap()[xcoordinate][ycoordinate+1]) {
-ycoordinate=ycoordinate+1;
-setChanged();
-notifyObservers();
-}
-}
-}
-public void registerObserver(Observer o) {
-observer.add(o);
-}
-public void notifyObservers() {
-for(Observer pirateObserver:observer)
-pirateObserver.update(this, pirateObserver);
-}
-
-public Point getShipLocation() {
-return new Point(xcoordinate, ycoordinate);
-}
-
-
-}
+	

@@ -1,140 +1,194 @@
-import java.awt.Point;
+import java.util.Random;
+
 import javafx.application.*;
-import javafx.scene.shape.Rectangle;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
-import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-public class OceanExplorer extends Application{
-final int dimension = 10;
-final int scale = 50;
-OceanMap oceanMap = OceanMap.getInstance();
-Image shipImage;
-Ship ship;
-ImageView shipImageView;
-ImageView shipImageView1;
-ImageView shipImageView2;
-Point startPoint,piratePoint;
-PirateShip p1;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+// OceanExplorer class extending application
+public class OceanExplorer extends Application {
+
+    int[][] islandMap;
+    int count;
+    final int dimensions = 10;
+    final int scale = 50;
+    final int islandCount = 10;
+    boolean resetGame = true;
+    Scene scene;
+    AnchorPane myPane;
+    OceanMap oceanMap;
+    Ship ship;
+    PirateShip pirateShip;
+    PirateShip pirateShip1;
+    ImageView shipImageView;
+    ImageView pirateImageView;
+    ImageView pirate1ImageView;
+    Label moves;
+    public static void main(String[] args) {
+        launch(args);
+    }
+    // Start method
+    @Override
+    public void start(final Stage oceanStage) throws Exception {
+        //count = total amount of moves for each game
+        count = 0;
+        oceanMap = new OceanMap(dimensions, scale);
+        islandMap = oceanMap.getMap();
+
+        myPane = new AnchorPane();
+        setMap();
+        //allocating islands
+        setIslands(10);
+
+        //declaring the three different ships/ adding pirates to observer list
+        ship = new Ship(oceanMap);
+        pirateShip = new PirateShip(oceanMap);
+        pirateShip1 = new PirateShip(oceanMap);
+        ship.addObserver(pirateShip);
+        ship.addObserver(pirateShip1);
+        loadShipImage();
+        loadPirateImage();
+        loadPirateImage2();
+
+        // Placing reset button on to the grid
+        Button reset = new Button("reset");
+        
+        reset.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            	// Key event handler for button
+                try {
+                    start(oceanStage);
+                    resetGame=true;
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        reset.setLayoutX(0);
+        reset.setLayoutY(500);
+        myPane.getChildren().add(reset);
+        // Setting scene to the stage
+        scene = new Scene(myPane, 500, 500);
+        oceanStage.setTitle("My Island");
+        oceanStage.setScene(scene);
+        oceanStage.show();
+
+        startSailing();
+
+    }
+
+    // 10*10 Grid
+    public void setMap(){
+        for(int x = 0; x < dimensions; x++){
+            for(int y = 0; y < dimensions; y++){
+                Rectangle rect = new Rectangle(x*scale,y*scale,scale,scale);
+                rect.setStroke(Color.BLACK);
+                rect.setFill(Color.PALETURQUOISE);
+                myPane.getChildren().add(rect);
+            }
+        }
+    }
+
+    // Placing columbus ship on the ocean
+    public void loadShipImage(){
+        Image shipImage = new Image("ship.png",50,50,true,true);
+        shipImageView = new ImageView(shipImage);
+        shipImageView.setX(ship.getShipLocation().x * scale);
+        shipImageView.setY(ship.getShipLocation().y * scale);
+        myPane.getChildren().add(shipImageView);
+    }
+
+    // Placing second pirate ship on the ocean
+    public void loadPirateImage(){
+        Image shipImage = new Image("pirateShip.png",50,50,true,true);
+        pirateImageView = new ImageView(shipImage);
+        pirateImageView.setX(pirateShip.getPirateLocation().x * scale);
+        pirateImageView.setY(pirateShip.getPirateLocation().y * scale);
+        myPane.getChildren().add(pirateImageView);
+    }
+
+    // Loading second pirate ship on the ocean
+    public void loadPirateImage2(){
+        Image shipImage = new Image("pirateShip.png",50,50,true,true);
+        pirate1ImageView = new ImageView(shipImage);
+        pirate1ImageView.setX(pirateShip1.getPirateLocation().x * scale);
+        pirate1ImageView.setY(pirateShip1.getPirateLocation().y * scale);
+        myPane.getChildren().add(pirate1ImageView);
+    }
+
+    //Implementation of islands allocation with islands in different locations
+    public void setIslands(int i){
+        int count = 0;
+        Random rand = new Random();
+        while(count<i){
+            int x;
+            int y;
+            
+            while(true){
+                x = rand.nextInt(dimensions);
+                y = rand.nextInt(dimensions);
+                if(islandMap[x][y]!=1)
+                    break;
+            }
+            Image islandImage = new Image("island.jpg",50,50,true,true);
+            ImageView islandImageView = new ImageView(islandImage);
+            islandImageView.setX(x*scale);
+            islandImageView.setY(y*scale);
+            islandMap[x][y] = 1;
+            myPane.getChildren().add(islandImageView);
+            count++;
+        }
+    }
+
+    
+    private void startSailing(){
+    	// Key event handler for ship movements
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
+            public void handle(KeyEvent ke) {
+            	if(resetGame) {
+                	System.out.println(resetGame);
+                switch(ke.getCode()){
+                    case RIGHT:
+                        ship.goEast();// right arrow button goeast method is called
+                        break;
+                    case LEFT:
+                        ship.goWest();// left arrow button gowest method is called
+                        break;
+                    case UP:
+                        ship.goNorth();// up arrow button gonorth method is called
+                        break;
+                    case DOWN:
+                        ship.goSouth();// down arrow button gosouth method is called
+                        break;
+                    default:
+                        break;
+                }
+            	}
+                
+                shipImageView.setX(ship.getShipLocation().x*scale);
+                shipImageView.setY(ship.getShipLocation().y*scale);
+                pirateImageView.setX(pirateShip.getPirateLocation().x*scale);
+                pirateImageView.setY(pirateShip.getPirateLocation().y*scale);
+                pirate1ImageView.setX(pirateShip1.getPirateLocation().x*scale);
+                pirate1ImageView.setY(pirateShip1.getPirateLocation().y*scale);
+                if(ship.getShipLocation().x == pirateShip.getPirateLocation().x && ship.getShipLocation().y == pirateShip.getPirateLocation().y  ||(ship.getShipLocation().x == pirateShip.getPirateLocation().x && ship.getShipLocation().y == pirateShip1.getPirateLocation().y) ){//||
+                		
+                	resetGame = false;
+                	//System.out.println(resetGame);
+                }
+            }});
+    }
 
 
-
-public static void main(String[] args) {
-// TODO Auto-generated method stub
-launch(args);
+    
 
 }
-
-@Override
-public void start(Stage oceanStage) throws Exception {
-// TODO Auto-generated method stub
-AnchorPane myPane = new AnchorPane();
-Scene scene = new Scene(myPane,500,500);
-oceanStage.setScene(scene);
-oceanStage.setTitle("My Island");
-oceanStage.show();
-drawMap(myPane);
-startPoint = oceanMap.getShipLocation();
-ship = new Ship(startPoint.x,startPoint.y);
-LoadShipImage(myPane);
-piratePoint = oceanMap.getPirateShipLocation();
-p1 = new PirateShip(piratePoint.x,piratePoint.y);
-ship.registerObserver(p1);
-LoadPirateShipImage(myPane);
-//startPoint = oceanMap.getShipLocation();
-//LoadPirateShipImage2(myPane);
-
-startSailing(scene);
-}
-
-public void drawMap(AnchorPane myPane) {
-// for(int i=0;i<10;i++) {
-// for(int j=0;j<10;j++) {
-// System.out.print(oceanMap.getInstance().getMap()[i][j]);
-// }
-// System.out.println();
-// }
-//System.out.println("-----------------------------");
-
-for(int x = 0; x < dimension; x++){
-for(int y = 0; y < dimension; y++){
-
-//System.out.print(oceanMap.getInstance().getMap()[x][y]);
-if(oceanMap.getInstance().getMap()[x][y]) {
-Rectangle rect = new Rectangle(x*scale,y*scale,scale,scale);
-myPane.getChildren().add(rect);
-rect.setStroke(Color.BLACK); // We want the black outline
-rect.setFill(Color.GREEN);
-}
-else {
-Rectangle rect = new Rectangle(x*scale,y*scale,scale,scale);
-myPane.getChildren().add(rect);
-rect.setStroke(Color.BLACK); // We want the black outline
-rect.setFill(Color.PALETURQUOISE); // I like this color better than BLUE
-
-}
-// Add to the node tree in the pane
-}
-//System.out.println();
-}
-  }
-private void LoadShipImage(AnchorPane pane) {
-Image shipImage = new Image("ship.png",50,50,true,true);
-shipImageView = new ImageView(shipImage);
-shipImageView.setX(startPoint.x * scale);
-shipImageView.setY(startPoint.y * scale);
-pane.getChildren().add(shipImageView);
-
-}
-
-private void LoadPirateShipImage(AnchorPane pane) {
-Image shipImage1 = new Image("pirateShip.png",50,50,true,true);
-shipImageView1 = new ImageView(shipImage1);
-//shipImageView1.setX(startPoint.x * scale);
-//shipImageView1.setY(startPoint.y * scale);
-pane.getChildren().add(shipImageView1);
-}
-
-// private void LoadPirateShipImage2(AnchorPane pane) {
-// Image shipImage2 = new Image("pirateShip.png",50,50,true,true);
-// shipImageView2 = new ImageView(shipImage2);
-// shipImageView2.setX(startPoint.x * scale);
-// shipImageView2.setY(startPoint.y * scale);
-// pane.getChildren().add(shipImageView2);
-// }
-private void startSailing(Scene scene) {
-scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-@Override
-public void handle(KeyEvent ke) {
-
-switch (ke.getCode()) {
-case RIGHT:
-ship.goEast();
-break;
-case LEFT:
-ship.goWest();
-break;
-case UP:
-ship.goNorth();
-break;
-case DOWN:
-ship.goSouth();
-break;
-default:
-break;
-}
-shipImageView.setX(ship.getShipLocation().x * scale);
-shipImageView.setY(ship.getShipLocation().y * scale);
-shipImageView1.setX(p1.getPirateShipLocation().x * scale);
-shipImageView1.setY(p1.getPirateShipLocation().y * scale);
-}
-});
-
-}
-
-}
-
